@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiszki i Quiz Słówkowy - Ciemny Motyw</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+            --input-bg: #0f172a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: monospace;
+            font-size: 14px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Lista akordeonowa */
+        .lists-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .list-accordion {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .list-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .list-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .list-content {
+            padding: 0 15px 15px 15px;
+            border-top: 1px solid var(--border);
+            display: none;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .list-content.open {
+            display: block;
+        }
+
+        .word-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .word-row:last-child {
+            border-bottom: none;
+        }
+
+        .btn-danger {
+            background-color: var(--error) !important;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-top: 0;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626 !important;
+        }
+
+        /* Quiz */
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .word-display {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--text);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            background: var(--input-bg);
+            color: var(--text);
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            margin-top: 0;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .option-btn.correct {
+            background: var(--success) !important;
+            color: white;
+            border-color: var(--success);
+        }
+
+        .option-btn.incorrect {
+            background: var(--error) !important;
+            color: white;
+            border-color: var(--error);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .actions-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="main-title">Fiszki i Quiz Słówkowy 🌙</h1>
+
+    <!-- SEKCJA ZARZĄDZANIA (Ukrywana podczas quizu) -->
+    <div id="management-container">
+        <!-- KROK 1: Szybkie dodawanie + JSON -->
+        <div class="section" id="import-section">
+            <h2>1. Zarządzanie słówkami</h2>
+            
+            <div style="margin-bottom: 15px;">
+                <p class="info-text" style="margin-bottom: 5px; font-weight: bold; color: var(--text);">Dodaj pojedyncze słówko:</p>
+                <div class="form-row">
+                    <input type="text" id="new-word-pl" placeholder="PL (np. pies)">
+                    <input type="text" id="new-word-de" placeholder="DE (np. der Hund)">
+                    <input type="text" id="new-word-list" placeholder="Nazwa listy (np. Zwierzęta)">
+                </div>
+                <button onclick="addSingleWord()" style="background-color: #059669;">Dodaj słówko</button>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
+            <p class="info-text" style="margin-bottom: 5px; font-weight: bold; color: var(--text);">Lub wklej cały JSON:</p>
+            <textarea id="json-input" placeholder='[
+  {
+    "list": "Zwierzęta",
+    "words": [
+      {"pl": "pies", "de": "der Hund"},
+      {"pl": "kot", "de": "die Katze"}
+    ]
+  }
+]'></textarea>
+            <div class="actions-row">
+                <button onclick="loadLists()">Odśwież / Załaduj z JSON</button>
+                <button onclick="loadSampleData()" style="background-color: #475569;">Wklej przykład</button>
+            </div>
+        </div>
+
+        <!-- KROK 2: Wybór list -->
+        <div class="section" id="lists-section">
+            <h2>2. Wybierz listy do nauki</h2>
+            <div class="lists-container" id="lists-checkboxes">
+                <!-- Dynamicznie generowane akordeony list -->
+            </div>
+            <div class="actions-row">
+                <button onclick="startQuiz()">Rozpocznij quiz</button>
+                <button onclick="exportJSON()" style="background-color: #059669;">Eksport / Kopiuj JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KROK 3: Quiz (Pokazywany tylko podczas gry) -->
+    <div class="section hidden" id="quiz-section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+        <div class="stats">
+            <span id="score-counter">Wynik: 0</span>
+            <span id="progress-counter">Pytanie: 1/10</span>
+        </div>
+        <div class="quiz-card">
+            <div style="font-size: 14px; color: var(--text-muted);">Przetłumacz na niemiecki:</div>
+            <div class="word-display" id="question-word">Hund</div>
+            <div class="options-grid" id="options-container">
+                <!-- Przyciski z odpowiedziami -->
+            </div>
+        </div>
+        <button onclick="endQuiz()" style="background-color: #475569; margin-top: 20px;">Zakończ quiz / Wróć</button>
+    </div>
+
+</div>
+
+<script>
+    let allData = [];
+    let activeWords = [];
+    let currentIndex = 0;
+    let score = 0;
+    let currentQuestion = null;
+
+    window.onload = function() {
+        loadSampleData();
+        loadLists();
+    };
+
+    function loadSampleData() {
+        const sample = [
+            {
+                "list": "Podstawy",
+                "words": [
+                    {"pl": "pies", "de": "der Hund"},
+                    {"pl": "kot", "de": "die Katze"},
+                    {"pl": "dom", "de": "das Haus"},
+                    {"pl": "auto", "de": "das Auto"},
+                    {"pl": "książka", "de": "das Buch"}
+                ]
+            },
+            {
+                "list": "Jedzenie",
+                "words": [
+                    {"pl": "jabłko", "de": "der Apfel"},
+                    {"pl": "chleb", "de": "das Brot"},
+                    {"pl": "woda", "de": "das Wasser"},
+                    {"pl": "ser", "de": "der Käse"},
+                    {"pl": "mleko", "de": "die Milch"}
+                ]
+            }
+        ];
+        document.getElementById('json-input').value = JSON.stringify(sample, null, 2);
+    }
+
+    function syncTextareaWithData() {
+        document.getElementById('json-input').value = JSON.stringify(allData, null, 2);
+    }
+
+    function addSingleWord() {
+        const pl = document.getElementById('new-word-pl').value.trim();
+        const de = document.getElementById('new-word-de').value.trim();
+        let listName = document.getElementById('new-word-list').value.trim();
+
+        if (!pl || !de) {
+            alert("Wypełnij pole polskie i niemieckie!");
+            return;
+        }
+
+        if (!listName) {
+            listName = "Ogólne";
+        }
+
+        try {
+            allData = JSON.parse(document.getElementById('json-input').value);
+        } catch(e) {
+            if (allData.length === 0) allData = [];
+        }
+
+        let targetList = allData.find(group => group.list.toLowerCase() === listName.toLowerCase());
+
+        if (targetList) {
+            targetList.words.push({"pl": pl, "de": de});
+        } else {
+            allData.push({
+                "list": listName,
+                "words": [{"pl": pl, "de": de}]
+            });
+        }
+
+        syncTextareaWithData();
+        loadLists();
+
+        document.getElementById('new-word-pl').value = '';
+        document.getElementById('new-word-de').value = '';
+    }
+
+    function loadLists() {
+        try {
+            const rawText = document.getElementById('json-input').value;
+            allData = JSON.parse(rawText);
+
+            if (!Array.isArray(allData)) {
+                throw new Error("Główny element JSON musi być tablicą.");
+            }
+
+            const container = document.getElementById('lists-checkboxes');
+            container.innerHTML = '';
+
+            allData.forEach((group, index) => {
+                const accordion = document.createElement('div');
+                accordion.className = 'list-accordion';
+                
+                // Generowanie wierszy ze słówkami do rozwinięcia
+                let wordsHTML = '';
+                if (group.words && group.words.length > 0) {
+                    group.words.forEach((word, wIndex) => {
+                        wordsHTML += `
+                            <div class="word-row">
+                                <span><strong>${word.pl}</strong> — ${word.de}</span>
+                                <button class="btn-danger" onclick="deleteWord(${index}, ${wIndex})">Usuń</button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    wordsHTML = `<div style="color: var(--text-muted); font-size: 13px; padding: 5px 0;">Brak słówek w tej liście.</div>`;
+                }
+
+                accordion.innerHTML = `
+                    <div class="list-header">
+                        <input type="checkbox" id="list-${index}" value="${index}" checked onclick="event.stopPropagation()">
+                        <label for="list-${index}" style="cursor: pointer; flex-grow: 1;" onclick="event.stopPropagation()">
+                            <strong>${group.list || `Lista ${index + 1}`}</strong> 
+                            <span style="color: var(--text-muted); font-size: 13px;">(${group.words.length} słówek)</span>
+                        </label>
+                        <button class="btn-danger" onclick="deleteList(${index}); event.stopPropagation();">Usuń listę</button>
+                        <span style="font-size: 12px; color: var(--text-muted);">▼ rozwiń</span>
+                    </div>
+                    <div class="list-content" id="list-content-${index}">
+                        ${wordsHTML}
+                    </div>
+                `;
+
+                // Obsługa rozwijania akordeonu po kliknięciu w nagłówek (poza checkboxem/przyciskami)
+                const header = accordion.querySelector('.list-header');
+                const content = accordion.querySelector('.list-content');
+                header.onclick = (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL' || e.target.tagName === 'BUTTON') return;
+                    content.classList.toggle('open');
+                };
+
+                container.appendChild(accordion);
+            });
+        } catch (e) {
+            alert("Błąd w formacie JSON: " + e.message);
+        }
+    }
+
+    function deleteList(listIndex) {
+        if (confirm(`Czy na pewno chcesz usunąć całą listę "${allData[listIndex].list}"?`)) {
+            allData.splice(listIndex, 1);
+            syncTextareaWithData();
+            loadLists();
+        }
+    }
+
+    function deleteWord(listIndex, wordIndex) {
+        allData[listIndex].words.splice(wordIndex, 1);
+        syncTextareaWithData();
+        loadLists();
+    }
+
+    function exportJSON() {
+        syncTextareaWithData();
+        const text = document.getElementById('json-input').value;
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Skopiowano JSON do schowka!");
+        });
+    }
+
+    function startQuiz() {
+        const checkboxes = document.querySelectorAll('#lists-checkboxes input[type="checkbox"]:checked');
+        activeWords = [];
+
+        checkboxes.forEach(cb => {
+            const listIndex = parseInt(cb.value);
+            if (allData[listIndex] && allData[listIndex].words) {
+                activeWords.push(...allData[listIndex].words);
+            }
+        });
+
+        if (activeWords.length === 0) {
+            alert("Wybierz przynajmniej jedną listę zawierającą słówka!");
+            return;
+        }
+
+        activeWords.sort(() => Math.random() - 0.5);
+        currentIndex = 0;
+        score = 0;
+
+        // Ukryj górne menu zarządzania, pokaż quiz
+        document.getElementById('management-container').classList.add('hidden');
+        document.getElementById('main-title').classList.add('hidden');
+        document.getElementById('quiz-section').classList.remove('hidden');
+
+        nextQuestion();
+    }
+
+    function nextQuestion() {
+        if (currentIndex >= activeWords.length) {
+            alert(`Koniec quizu! Twój wynik: ${score} / ${activeWords.length}`);
+            endQuiz();
+            return;
+        }
+
+        currentQuestion = activeWords[currentIndex];
+        
+        document.getElementById('score-counter').innerText = `Wynik: ${score}`;
+        document.getElementById('progress-counter').innerText = `Pytanie: ${currentIndex + 1}/${activeWords.length}`;
+        document.getElementById('question-word').innerText = currentQuestion.pl;
+
+        const correctAnser = currentQuestion.de;
+        
+        let allPossibleAnswers = activeWords.map(w => w.de);
+        allPossibleAnswers = [...new Set(allPossibleAnswers)];
+
+        let distractors = allPossibleAnswers.filter(ans => ans !== correctAnser);
+        
+        if (distractors.length < 3) {
+            allData.forEach(g => g.words.forEach(w => {
+                if (!distractors.includes(w.de) && w.de !== correctAnser) {
+                    distractors.push(w.de);
+                }
+            }));
+        }
+
+        distractors.sort(() => Math.random() - 0.5);
+        
+        let options = [correctAnser, ...distractors.slice(0, 3)];
+        options.sort(() => Math.random() - 0.5);
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, correctAnser);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(button, selected, correct) {
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (selected === correct) {
+            button.classList.add('correct');
+            score++;
+        } else {
+            button.classList.add('incorrect');
+            allBtns.forEach(b => {
+                if (b.innerText === correct) {
+                    b.classList.add('correct');
+                }
+            });
+        }
+
+        currentIndex++;
+        setTimeout(nextQuestion, 1200);
+    }
+
+    function endQuiz() {
+        // Przywróć widok zarządzania, ukryj quiz
+        document.getElementById('quiz-section').classList.add('hidden');
+        document.getElementById('management-container').classList.remove('hidden');
+        document.getElementById('main-title').classList.remove('hidden');
+        loadLists();
+    }
+</script>
+
+</body>
+</html>
