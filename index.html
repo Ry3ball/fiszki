@@ -15,6 +15,7 @@
             --border: #334155;
             --success: #10b981;
             --error: #ef4444;
+            --warning: #f59e0b;
             --input-bg: #0f172a;
         }
 
@@ -23,7 +24,7 @@
             background-color: var(--bg-color);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
@@ -32,10 +33,17 @@
             width: 100%;
             max-width: 800px;
             background: var(--card-bg);
-            padding: 30px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border);
+            box-sizing: border-box;
+        }
+
+        @media (min-width: 600px) {
+            .container {
+                padding: 30px;
+            }
         }
 
         h1, h2 {
@@ -50,14 +58,15 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text);
-            font-family: monospace;
-            font-size: 14px;
+            font-family: inherit;
+            font-size: 15px;
             box-sizing: border-box;
             resize: vertical;
         }
 
         textarea {
             height: 100px;
+            font-family: monospace;
         }
 
         .form-row {
@@ -160,23 +169,35 @@
             background-color: #dc2626 !important;
         }
 
-        /* Quiz */
+        /* Sekcja Nauki / Quizu */
         .quiz-card {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             margin-top: 15px;
         }
 
         .word-display {
-            font-size: 32px;
+            font-size: clamp(22px, 6vw, 32px);
             font-weight: bold;
-            margin: 20px 0;
+            margin: 15px 0;
             color: var(--text);
+            word-break: break-word;
         }
 
+        .hint-display {
+            font-family: monospace;
+            font-size: clamp(16px, 4.5vw, 24px);
+            letter-spacing: 2px;
+            color: var(--warning);
+            margin: 15px 0;
+            min-height: 36px;
+            word-break: break-all;
+        }
+
+        /* Siatka przycisków z 4 opcjami - dostosowanie na telefon */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -188,12 +209,21 @@
             background: var(--input-bg);
             color: var(--text);
             border: 2px solid var(--border);
-            padding: 15px;
+            padding: 12px 8px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            /* Automatyczne skalowanie tekstu w zależności od szerokości ekranu */
+            font-size: clamp(12px, 3.5vw, 16px);
+            line-height: 1.25;
             transition: all 0.2s;
             margin-top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 58px;
+            word-break: break-word;
+            hyphens: auto;
+            text-align: center;
         }
 
         .option-btn:hover {
@@ -221,6 +251,21 @@
             margin-bottom: 15px;
         }
 
+        .feedback-message {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            min-height: 25px;
+        }
+
+        .feedback-correct {
+            color: var(--success);
+        }
+
+        .feedback-incorrect {
+            color: var(--error);
+        }
+
         .hidden {
             display: none !important;
         }
@@ -244,7 +289,7 @@
 <div class="container">
     <h1 id="main-title">Fiszki i Quiz Słówkowy 🌙</h1>
 
-    <!-- SEKCJA ZARZĄDZANIA (Ukrywana podczas quizu) -->
+    <!-- SEKCJA ZARZĄDZANIA -->
     <div id="management-container">
         <!-- KROK 1: Szybkie dodawanie + JSON -->
         <div class="section" id="import-section">
@@ -278,33 +323,50 @@
             </div>
         </div>
 
-        <!-- KROK 2: Wybór list -->
+        <!-- KROK 2: Wybór list i trybu -->
         <div class="section" id="lists-section">
-            <h2>2. Wybierz listy do nauki</h2>
+            <h2>2. Wybierz listy i tryb nauki</h2>
             <div class="lists-container" id="lists-checkboxes">
                 <!-- Dynamicznie generowane akordeony list -->
             </div>
             <div class="actions-row">
-                <button onclick="startQuiz()">Rozpocznij quiz</button>
+                <button onclick="startLearning('quiz')">Start: Quiz (4 opcje)</button>
+                <button onclick="startLearning('typing')" style="background-color: #8b5cf6;">Start: Wpisywanie (z podpowiedzią)</button>
                 <button onclick="exportJSON()" style="background-color: #059669;">Eksport / Kopiuj JSON</button>
             </div>
         </div>
     </div>
 
-    <!-- KROK 3: Quiz (Pokazywany tylko podczas gry) -->
+    <!-- SEKCJA NAUKI -->
     <div class="section hidden" id="quiz-section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
         <div class="stats">
             <span id="score-counter">Wynik: 0</span>
             <span id="progress-counter">Pytanie: 1/10</span>
         </div>
+
         <div class="quiz-card">
             <div style="font-size: 14px; color: var(--text-muted);">Przetłumacz na niemiecki:</div>
-            <div class="word-display" id="question-word">Hund</div>
+            <div class="word-display" id="question-word">pies</div>
+
+            <!-- TRYB 1: Wybór opcji -->
             <div class="options-grid" id="options-container">
                 <!-- Przyciski z odpowiedziami -->
             </div>
+
+            <!-- TRYB 2: Wpisywanie z podpowiedzią -->
+            <div id="typing-container" class="hidden">
+                <div class="hint-display" id="hint-display"></div>
+                <input type="text" id="typing-input" placeholder="Wpisz odpowiedź po niemiecku..." autocomplete="off">
+                <div class="actions-row" style="justify-content: center; margin-top: 15px;">
+                    <button onclick="checkTypingAnswer()" style="background-color: #10b981;">Sprawdź [Enter]</button>
+                    <button onclick="giveLetterHint()" style="background-color: #f59e0b;">💡 Podpowiedź (+1 litera)</button>
+                </div>
+            </div>
+
+            <div class="feedback-message" id="feedback-message"></div>
         </div>
-        <button onclick="endQuiz()" style="background-color: #475569; margin-top: 20px;">Zakończ quiz / Wróć</button>
+
+        <button onclick="endLearning()" style="background-color: #475569; margin-top: 20px;">Zakończ / Wróć</button>
     </div>
 
 </div>
@@ -315,10 +377,18 @@
     let currentIndex = 0;
     let score = 0;
     let currentQuestion = null;
+    let currentMode = 'quiz';
+    let revealedLettersCount = 0;
 
     window.onload = function() {
         loadSampleData();
         loadLists();
+
+        document.getElementById('typing-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkTypingAnswer();
+            }
+        });
     };
 
     function loadSampleData() {
@@ -361,9 +431,7 @@
             return;
         }
 
-        if (!listName) {
-            listName = "Ogólne";
-        }
+        if (!listName) listName = "Ogólne";
 
         try {
             allData = JSON.parse(document.getElementById('json-input').value);
@@ -405,7 +473,6 @@
                 const accordion = document.createElement('div');
                 accordion.className = 'list-accordion';
                 
-                // Generowanie wierszy ze słówkami do rozwinięcia
                 let wordsHTML = '';
                 if (group.words && group.words.length > 0) {
                     group.words.forEach((word, wIndex) => {
@@ -435,7 +502,6 @@
                     </div>
                 `;
 
-                // Obsługa rozwijania akordeonu po kliknięciu w nagłówek (poza checkboxem/przyciskami)
                 const header = accordion.querySelector('.list-header');
                 const content = accordion.querySelector('.list-content');
                 header.onclick = (e) => {
@@ -472,7 +538,8 @@
         });
     }
 
-    function startQuiz() {
+    function startLearning(mode) {
+        currentMode = mode;
         const checkboxes = document.querySelectorAll('#lists-checkboxes input[type="checkbox"]:checked');
         activeWords = [];
 
@@ -492,18 +559,28 @@
         currentIndex = 0;
         score = 0;
 
-        // Ukryj górne menu zarządzania, pokaż quiz
         document.getElementById('management-container').classList.add('hidden');
         document.getElementById('main-title').classList.add('hidden');
         document.getElementById('quiz-section').classList.remove('hidden');
+
+        if (currentMode === 'quiz') {
+            document.getElementById('options-container').classList.remove('hidden');
+            document.getElementById('typing-container').classList.add('hidden');
+        } else {
+            document.getElementById('options-container').classList.add('hidden');
+            document.getElementById('typing-container').classList.remove('hidden');
+        }
 
         nextQuestion();
     }
 
     function nextQuestion() {
+        document.getElementById('feedback-message').innerText = '';
+        document.getElementById('feedback-message').className = 'feedback-message';
+
         if (currentIndex >= activeWords.length) {
-            alert(`Koniec quizu! Twój wynik: ${score} / ${activeWords.length}`);
-            endQuiz();
+            alert(`Koniec nauki! Twój wynik: ${score} / ${activeWords.length}`);
+            endLearning();
             return;
         }
 
@@ -513,8 +590,16 @@
         document.getElementById('progress-counter').innerText = `Pytanie: ${currentIndex + 1}/${activeWords.length}`;
         document.getElementById('question-word').innerText = currentQuestion.pl;
 
+        if (currentMode === 'quiz') {
+            setupQuizMode();
+        } else {
+            setupTypingMode();
+        }
+    }
+
+    /* TRYB QUIZ */
+    function setupQuizMode() {
         const correctAnser = currentQuestion.de;
-        
         let allPossibleAnswers = activeWords.map(w => w.de);
         allPossibleAnswers = [...new Set(allPossibleAnswers)];
 
@@ -529,7 +614,6 @@
         }
 
         distractors.sort(() => Math.random() - 0.5);
-        
         let options = [correctAnser, ...distractors.slice(0, 3)];
         options.sort(() => Math.random() - 0.5);
 
@@ -540,12 +624,23 @@
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.innerText = opt;
-            btn.onclick = () => checkAnswer(btn, opt, correctAnser);
+            btn.onclick = () => checkQuizAnswer(btn, opt, correctAnser);
             optionsContainer.appendChild(btn);
+            
+            // Dodatkowe dynamiczne zmniejszanie czcionki przy wyjątkowo długich słowach
+            adjustFontSize(btn, opt);
         });
     }
 
-    function checkAnswer(button, selected, correct) {
+    function adjustFontSize(button, text) {
+        if (text.length > 20) {
+            button.style.fontSize = '11px';
+        } else if (text.length > 14) {
+            button.style.fontSize = '13px';
+        }
+    }
+
+    function checkQuizAnswer(button, selected, correct) {
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(b => b.disabled = true);
 
@@ -565,8 +660,72 @@
         setTimeout(nextQuestion, 1200);
     }
 
-    function endQuiz() {
-        // Przywróć widok zarządzania, ukryj quiz
+    /* TRYB WPISYWANIA */
+    function setupTypingMode() {
+        revealedLettersCount = 0;
+        const input = document.getElementById('typing-input');
+        input.value = '';
+        input.disabled = false;
+        input.focus();
+
+        updateHintDisplay();
+    }
+
+    function updateHintDisplay() {
+        const answer = currentQuestion.de;
+        let hint = '';
+        let letterCounter = 0;
+
+        for (let i = 0; i < answer.length; i++) {
+            const char = answer[i];
+            if (char === ' ') {
+                hint += '   ';
+            } else {
+                letterCounter++;
+                if (letterCounter <= revealedLettersCount) {
+                    hint += char + ' ';
+                } else {
+                    hint += '_ ';
+                }
+            }
+        }
+
+        document.getElementById('hint-display').innerText = hint;
+    }
+
+    function giveLetterHint() {
+        const totalLetters = currentQuestion.de.replace(/\s+/g, '').length;
+        if (revealedLettersCount < totalLetters) {
+            revealedLettersCount++;
+            updateHintDisplay();
+        }
+        document.getElementById('typing-input').focus();
+    }
+
+    function checkTypingAnswer() {
+        const input = document.getElementById('typing-input');
+        if (input.disabled) return;
+
+        const userAnswer = input.value.trim().toLowerCase();
+        const correctAnswer = currentQuestion.de.trim().toLowerCase();
+        const feedback = document.getElementById('feedback-message');
+
+        input.disabled = true;
+
+        if (userAnswer === correctAnswer) {
+            feedback.innerText = "Świetnie! Poprawna odpowiedź!";
+            feedback.className = "feedback-message feedback-correct";
+            score++;
+        } else {
+            feedback.innerText = `Źle! Poprawna odpowiedź to: "${currentQuestion.de}"`;
+            feedback.className = "feedback-message feedback-incorrect";
+        }
+
+        currentIndex++;
+        setTimeout(nextQuestion, 1800);
+    }
+
+    function endLearning() {
         document.getElementById('quiz-section').classList.add('hidden');
         document.getElementById('management-container').classList.remove('hidden');
         document.getElementById('main-title').classList.remove('hidden');
