@@ -6,74 +6,117 @@
     <title>Fiszki i Quiz Słówkowy - Ciemny Motyw</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --success: #10b981;
+            --bg-color: #08111f;
+            --bg-accent: #0f1d35;
+            --card-bg: rgba(17, 24, 39, 0.82);
+            --card-soft: rgba(148, 163, 184, 0.08);
+            --primary: #7c3aed;
+            --primary-strong: #6d28d9;
+            --primary-soft: rgba(124, 58, 237, 0.18);
+            --secondary: #38bdf8;
+            --text: #e5eefb;
+            --text-muted: #9fb3c8;
+            --border: rgba(148, 163, 184, 0.2);
+            --success: #22c55e;
             --error: #ef4444;
-            --warning: #f59e0b;
-            --input-bg: #0f172a;
+            --warning: #fbbf24;
+            --input-bg: rgba(8, 17, 31, 0.8);
+            --shadow: rgba(15, 23, 42, 0.45);
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(124, 58, 237, 0.25), transparent 34%),
+                radial-gradient(circle at top right, rgba(56, 189, 248, 0.16), transparent 30%),
+                linear-gradient(145deg, var(--bg-color) 0%, var(--bg-accent) 100%);
+            color: var(--text);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text);
-            margin: 0;
-            padding: 15px;
             display: flex;
             justify-content: center;
+            align-items: flex-start;
+            padding: 28px 16px 40px;
         }
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border);
-            box-sizing: border-box;
+            border-radius: var(--radius);
+            padding: 26px 24px 18px;
+            box-shadow: 0 24px 60px var(--shadow);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         @media (min-width: 600px) {
             .container {
-                padding: 30px;
+                padding: 34px 34px 18px;
             }
         }
 
         h1, h2 {
-            color: var(--primary);
             margin-top: 0;
+            letter-spacing: 0.02em;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, #c4b5fd, #7dd3fc, #f9a8d4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        h2 {
+            color: #d9e5ff;
+            font-size: clamp(1.2rem, 2vw, 1.8rem);
+            margin-bottom: 14px;
         }
 
         textarea, input[type="text"] {
             width: 100%;
-            padding: 12px;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            background: var(--input-bg);
             color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
             font-family: inherit;
             font-size: 15px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
             box-sizing: border-box;
             resize: vertical;
         }
 
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: rgba(124, 58, 237, 0.85);
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14);
+        }
+
         textarea {
-            height: 100px;
-            font-family: monospace;
+            min-height: 160px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            line-height: 1.5;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         @media (max-width: 600px) {
@@ -83,62 +126,85 @@
         }
 
         button {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--primary-strong));
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 12px;
+            padding: 11px 18px;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            box-shadow: 0 8px 18px rgba(124, 58, 237, 0.25);
             margin-top: 10px;
-            transition: background 0.2s;
         }
 
         button:hover {
-            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         .section {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
+            margin-bottom: 26px;
+            padding-bottom: 18px;
             border-bottom: 1px solid var(--border);
         }
 
-        /* Lista akordeonowa */
+        .section:last-of-type {
+            border-bottom: none;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .actions-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
         .lists-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 12px;
+            margin: 18px 0;
         }
 
         .list-accordion {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(148, 163, 184, 0.04);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
         }
 
         .list-header {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.02);
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.015);
             cursor: pointer;
             user-select: none;
         }
 
         .list-header:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .list-content {
-            padding: 0 15px 15px 15px;
-            border-top: 1px solid var(--border);
             display: none;
-            background: rgba(0, 0, 0, 0.1);
+            padding: 0 16px 14px;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.08);
         }
 
         .list-content.open {
@@ -149,8 +215,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(148, 163, 184, 0.18);
             font-size: 14px;
         }
 
@@ -159,101 +226,125 @@
         }
 
         .btn-danger {
-            background-color: var(--error) !important;
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-top: 0;
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+            padding: 6px 10px !important;
+            font-size: 12px !important;
+            margin-top: 0 !important;
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2) !important;
         }
 
-        .btn-danger:hover {
-            background-color: #dc2626 !important;
-        }
-
-        /* Sekcja Nauki / Quizu */
         .quiz-card {
-            background: rgba(255, 255, 255, 0.02);
+            background: linear-gradient(180deg, rgba(148, 163, 184, 0.05), rgba(255,255,255,0.02));
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: 18px;
+            padding: 20px 18px;
+            margin-top: 16px;
             text-align: center;
-            margin-top: 15px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .word-display {
-            font-size: clamp(22px, 6vw, 32px);
-            font-weight: bold;
-            margin: 15px 0;
-            color: var(--text);
-            word-break: break-word;
-        }
-
-        .hint-display {
-            font-family: monospace;
-            font-size: clamp(16px, 4.5vw, 24px);
-            letter-spacing: 2px;
-            color: var(--warning);
-            margin: 15px 0;
-            min-height: 36px;
-            word-break: break-all;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .option-btn {
-            background: var(--input-bg);
-            color: var(--text);
-            border: 2px solid var(--border);
-            padding: 12px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: clamp(12px, 3.5vw, 16px);
-            line-height: 1.25;
-            transition: all 0.2s;
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 58px;
-            word-break: break-word;
-            hyphens: auto;
-            text-align: center;
-        }
-
-        .option-btn:hover {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .option-btn.correct {
-            background: var(--success) !important;
-            color: white;
-            border-color: var(--success);
-        }
-
-        .option-btn.incorrect {
-            background: var(--error) !important;
-            color: white;
-            border-color: var(--error);
+        .quiz-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top, rgba(124,58,237,0.12), transparent 40%);
+            pointer-events: none;
         }
 
         .stats {
             display: flex;
             justify-content: space-between;
-            font-weight: bold;
+            gap: 12px;
+            font-weight: 700;
             color: var(--text-muted);
-            margin-bottom: 15px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .word-display {
+            position: relative;
+            z-index: 1;
+            font-size: clamp(26px, 7vw, 38px);
+            font-weight: 800;
+            margin: 18px 0 14px;
+            color: var(--text);
+            word-break: break-word;
+        }
+
+        .hint-display {
+            position: relative;
+            z-index: 1;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: clamp(18px, 5vw, 28px);
+            letter-spacing: 4px;
+            color: var(--warning);
+            margin: 18px 0;
+            min-height: 42px;
+            word-break: break-all;
+            font-weight: 700;
+        }
+
+        .options-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 560px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-btn {
+            background: rgba(15, 23, 42, 0.95);
+            color: var(--text);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            border-radius: 12px;
+            padding: 14px 12px;
+            min-height: 62px;
+            font-size: clamp(13px, 3.4vw, 16px);
+            line-height: 1.3;
+            transition: all 0.2s ease;
+            box-shadow: none;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .option-btn:hover {
+            border-color: rgba(124, 58, 237, 0.9);
+            background: rgba(124, 58, 237, 0.08);
+        }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, var(--success), #16a34a) !important;
+            color: white;
+            border-color: rgba(34, 197, 94, 0.8);
+            box-shadow: 0 8px 18px rgba(34, 197, 94, 0.26);
+        }
+
+        .option-btn.incorrect {
+            background: linear-gradient(135deg, var(--error), #dc2626) !important;
+            color: white;
+            border-color: rgba(239, 68, 68, 0.8);
+            box-shadow: 0 8px 18px rgba(239, 68, 68, 0.25);
         }
 
         .feedback-message {
-            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+            margin-top: 16px;
             font-size: 16px;
-            font-weight: bold;
-            min-height: 25px;
+            font-weight: 700;
+            min-height: 24px;
         }
 
         .feedback-correct {
@@ -266,19 +357,6 @@
 
         .hidden {
             display: none !important;
-        }
-
-        .actions-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .info-text {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 5px;
         }
     </style>
 </head>
@@ -293,19 +371,19 @@
         <div class="section" id="import-section">
             <h2>1. Zarządzanie słówkami</h2>
             
-            <div style="margin-bottom: 15px;">
-                <p class="info-text" style="margin-bottom: 5px; font-weight: bold; color: var(--text);">Dodaj pojedyncze słówko:</p>
+            <div style="margin-bottom: 18px;">
+                <p class="info-text" style="margin-bottom: 6px; font-weight: 700; color: var(--text);">Dodaj pojedyncze słówko:</p>
                 <div class="form-row">
                     <input type="text" id="new-word-pl" placeholder="PL (np. pies)">
                     <input type="text" id="new-word-de" placeholder="DE (np. der Hund)">
                     <input type="text" id="new-word-list" placeholder="Nazwa listy (np. Zwierzęta)">
                 </div>
-                <button onclick="addSingleWord()" style="background-color: #059669;">Dodaj słówko</button>
+                <button onclick="addSingleWord()" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 18px rgba(16,185,129,0.22);">Dodaj słówko</button>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 22px 0;">
 
-            <p class="info-text" style="margin-bottom: 5px; font-weight: bold; color: var(--text);">Lub wklej cały JSON:</p>
+            <p class="info-text" style="margin-bottom: 6px; font-weight: 700; color: var(--text);">Lub wklej cały JSON:</p>
             <textarea id="json-input" placeholder='[
   {
     "list": "Zwierzęta",
@@ -317,7 +395,7 @@
 ]'></textarea>
             <div class="actions-row">
                 <button onclick="loadLists()">Odśwież / Załaduj z JSON</button>
-                <button onclick="loadSampleData()" style="background-color: #475569;">Wklej przykład</button>
+                <button onclick="loadSampleData()" style="background: linear-gradient(135deg, #475569, #334155); box-shadow: none;">Wklej przykład</button>
             </div>
         </div>
 
@@ -329,8 +407,8 @@
             </div>
             <div class="actions-row">
                 <button onclick="startLearning('quiz')">Start: Quiz (4 opcje)</button>
-                <button onclick="startLearning('typing')" style="background-color: #8b5cf6;">Start: Wpisywanie (po 1 literze)</button>
-                <button onclick="exportJSON()" style="background-color: #059669;">Eksport / Kopiuj JSON</button>
+                <button onclick="startLearning('typing')" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 8px 18px rgba(139, 92, 246, 0.2);">Start: Wpisywanie (po 1 literze)</button>
+                <button onclick="exportJSON()" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 18px rgba(16,185,129,0.22);">Eksport / Kopiuj JSON</button>
             </div>
         </div>
     </div>
@@ -356,8 +434,8 @@
                 <div class="hint-display" id="hint-display"></div>
                 <input type="text" id="typing-input" placeholder="Wpisz odpowiedź po niemiecku..." autocomplete="off">
                 <div class="actions-row" style="justify-content: center; margin-top: 15px;">
-                    <button onclick="checkTypingAnswer()" style="background-color: #10b981;">Sprawdź [Enter]</button>
-                    <button onclick="giveLetterHint()" style="background-color: #f59e0b;">💡 Podpowiedź (+1 litera)</button>
+                    <button onclick="checkTypingAnswer()" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 18px rgba(16,185,129,0.22);">Sprawdź [Enter]</button>
+                    <button onclick="giveLetterHint()" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 18px rgba(245,158,11,0.22);">💡 Podpowiedź (+1 litera)</button>
                 </div>
                 <div style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">
                     * Zgłoszenia z normowaniami liter są akceptowane (np. <strong>u</strong> zamiast <strong>ü</strong>, <strong>a</strong> zamiast <strong>ä</strong>)
@@ -367,7 +445,7 @@
             <div class="feedback-message" id="feedback-message"></div>
         </div>
 
-        <button onclick="endLearning()" style="background-color: #475569; margin-top: 20px;">Zakończ / Wróć</button>
+        <button onclick="endLearning()" style="background: linear-gradient(135deg, #475569, #334155); margin-top: 20px; box-shadow: none;">Zakończ / Wróć</button>
     </div>
 
 </div>
@@ -382,7 +460,8 @@
     let revealedLettersCount = 0;
 
     window.onload = function() {
-        loadSampleData();
+        document.getElementById('json-input').value = '';
+        allData = [];
         loadLists();
 
         document.getElementById('typing-input').addEventListener('keypress', function (e) {
@@ -416,6 +495,7 @@
             }
         ];
         document.getElementById('json-input').value = JSON.stringify(sample, null, 2);
+        loadLists();
     }
 
     function syncTextareaWithData() {
@@ -435,12 +515,17 @@
         if (!listName) listName = "Ogólne";
 
         try {
-            allData = JSON.parse(document.getElementById('json-input').value);
-        } catch(e) {
-            if (allData.length === 0) allData = [];
+            const rawText = document.getElementById('json-input').value.trim();
+            allData = rawText ? JSON.parse(rawText) : [];
+        } catch (e) {
+            allData = [];
         }
 
-        let targetList = allData.find(group => group.list.toLowerCase() === listName.toLowerCase());
+        if (!Array.isArray(allData)) {
+            allData = [];
+        }
+
+        let targetList = allData.find(group => group && group.list && group.list.toLowerCase() === listName.toLowerCase());
 
         if (targetList) {
             targetList.words.push({"pl": pl, "de": de});
@@ -461,14 +546,32 @@
     function loadLists() {
         try {
             const rawText = document.getElementById('json-input').value;
+            const container = document.getElementById('lists-checkboxes');
+            container.innerHTML = '';
+
+            if (!rawText || !rawText.trim()) {
+                container.innerHTML = `
+                    <div style="padding: 18px; border: 1px dashed var(--border); border-radius: 12px; background: rgba(148,163,184,0.03); color: var(--text-muted); text-align: center;">
+                        Brak danych. Dodaj słowa ręcznie albo wklej gotowy JSON.
+                    </div>
+                `;
+                return;
+            }
+
             allData = JSON.parse(rawText);
 
             if (!Array.isArray(allData)) {
                 throw new Error("Główny element JSON musi być tablicą.");
             }
 
-            const container = document.getElementById('lists-checkboxes');
-            container.innerHTML = '';
+            if (allData.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 18px; border: 1px dashed var(--border); border-radius: 12px; background: rgba(148,163,184,0.03); color: var(--text-muted); text-align: center;">
+                        Nie ma jeszcze żadnych list. Dodaj pierwsze słówko lub wklej JSON.
+                    </div>
+                `;
+                return;
+            }
 
             allData.forEach((group, index) => {
                 const accordion = document.createElement('div');
@@ -493,7 +596,7 @@
                         <input type="checkbox" id="list-${index}" value="${index}" checked onclick="event.stopPropagation()">
                         <label for="list-${index}" style="cursor: pointer; flex-grow: 1;" onclick="event.stopPropagation()">
                             <strong>${group.list || `Lista ${index + 1}`}</strong> 
-                            <span style="color: var(--text-muted); font-size: 13px;">(${group.words.length} słówek)</span>
+                            <span style="color: var(--text-muted); font-size: 13px;">(${(group.words || []).length} słówek)</span>
                         </label>
                         <button class="btn-danger" onclick="deleteList(${index}); event.stopPropagation();">Usuń listę</button>
                         <span style="font-size: 12px; color: var(--text-muted);">▼ rozwiń</span>
@@ -600,22 +703,22 @@
 
     /* TRYB QUIZ */
     function setupQuizMode() {
-        const correctAnser = currentQuestion.de;
+        const correctAnswer = currentQuestion.de;
         let allPossibleAnswers = activeWords.map(w => w.de);
         allPossibleAnswers = [...new Set(allPossibleAnswers)];
 
-        let distractors = allPossibleAnswers.filter(ans => ans !== correctAnser);
+        let distractors = allPossibleAnswers.filter(ans => ans !== correctAnswer);
         
         if (distractors.length < 3) {
             allData.forEach(g => g.words.forEach(w => {
-                if (!distractors.includes(w.de) && w.de !== correctAnser) {
+                if (!distractors.includes(w.de) && w.de !== correctAnswer) {
                     distractors.push(w.de);
                 }
             }));
         }
 
         distractors.sort(() => Math.random() - 0.5);
-        let options = [correctAnser, ...distractors.slice(0, 3)];
+        let options = [correctAnswer, ...distractors.slice(0, 3)];
         options.sort(() => Math.random() - 0.5);
 
         const optionsContainer = document.getElementById('options-container');
@@ -625,7 +728,7 @@
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.innerText = opt;
-            btn.onclick = () => checkQuizAnswer(btn, opt, correctAnser);
+            btn.onclick = () => checkQuizAnswer(btn, opt, correctAnswer);
             optionsContainer.appendChild(btn);
             adjustFontSize(btn, opt);
         });
@@ -701,7 +804,7 @@
         document.getElementById('typing-input').focus();
     }
 
-    // Funkcja do usuwania znoków niemieckich / normalizacji tekstu
+    // Funkcja do usuwania znaków niemieckich / normalizacji tekstu
     function normalizeGermanText(str) {
         return str
             .toLowerCase()
